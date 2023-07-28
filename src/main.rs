@@ -2,7 +2,6 @@ use std::{path::PathBuf, fs};
 
 use axum::{routing::get, Router, response::Html, Json, extract::Query};
 use tower_http::services::ServeDir;
-use serde_json::json;
 
 #[derive(serde::Deserialize, Debug)]
 struct User {
@@ -73,16 +72,20 @@ async fn signup(q: Query<User>) -> Json<Status>{
 
 
 async fn login(q: Query<UserLogin>) -> Json<Status>{
-    let mut data: Vec<User> = serde_json::from_str(&fs::read_to_string("user.json").unwrap()).unwrap();
-
+    let data: Vec<User> = serde_json::from_str(&fs::read_to_string("user.json").unwrap()).unwrap();
+    let mut a = true;
     for u in data.iter(){
         if q.id == u.id{
+            a = false;
             if q.pw != u.pw {
                 return Json(Status{ error: true, code: 1 })
             }else{
                 break;
             }
         }
+    }
+    if a {
+        return Json(Status{ error: true, code: 1 })
     }
     Json(Status { error: false, code: 0 })
 }
@@ -101,8 +104,8 @@ async fn axum(
     let router = Router::new()
         .route("/", get(hello_world))
         .route("/cnt", get(counting))
-        .route("/signup", get(signup))
-        .route("/login", get(login))
+        .route("/signup", post(signup))
+        .route("/login", post(login))
         .nest_service("/static", ServeDir::new(sf))
         ;
 
