@@ -294,6 +294,7 @@ name = "dev523-pra"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "serde",
  "shuttle-axum",
  "shuttle-runtime",
  "tokio",
