@@ -1,6 +1,6 @@
 use std::{path::PathBuf, fs};
 
-use axum::{routing::get, Router, response::Html, Json, extract::Query};
+use axum::{routing::get, routing::post, Router, response::Html, Json, extract::Query};
 use tower_http::services::ServeDir;
 
 #[derive(serde::Deserialize, Debug)]
